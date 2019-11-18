@@ -1,32 +1,34 @@
-require 'byebug'
+require "byebug"
 
-class Gear
-  attr_reader :chainring, :cog, :wheel
+# 外部インターフェースを使用する場合
+module SomeFramework
+  class Gear
+    attr_reader :chainring, :cog, :wheel
 
-  # 引数をハッシュにする事で引数の順番に対する依存を取り除く
-  # mergeを使用したデフォルト値の設定
-  # defaultsメソッドとmergeを使用する事で、引数にキーが存在しない場合にdefaultsのキーと値が設定される
-  def initialize(args)
-    args = defaults.merge(args)
-    @chainring = args[:chainring]
-    @cog = args[:cog]
-    @wheel = args[:wheel]
+    def initialize(chainring, cog, wheel)
+      @chainring = chainring
+      @cog = cog
+      @wheel = wheel
+    end
+
+    def gear_inches
+      ratio * diameter
+    end
+
+    def ratio
+      chainring / cog.to_f
+    end
+
+    def diameter
+      wheel.diameter
+    end
   end
+end
 
-  def defaults
-    {chainring: 40, cog: 18}
-  end
-
-  def gear_inches
-    ratio * diameter
-  end
-
-  def ratio
-    chainring / cog.to_f
-  end
-
-  def diameter
-    wheel.diameter
+# 外部のインターフェースをラップする事で、引数の順番の依存を解消する
+module GearWrapper
+  def self.gear(args)
+    SomeFramework::Gear.new(args[:chainring], args[:cog], args[:wheel])
   end
 end
 
@@ -43,4 +45,4 @@ class Wheel
   end
 end
 
-puts Gear.new(chainring: 52, wheel: Wheel.new(26, 1.5), cog: 11).gear_inches
+puts GearWrapper.gear(cog: 11, wheel: Wheel.new(25, 1.5), chainring: 52).gear_inches
