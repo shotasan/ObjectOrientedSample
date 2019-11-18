@@ -4,9 +4,10 @@ class Gear
   attr_reader :chainring, :cog, :wheel
 
   # 引数をハッシュにする事で引数の順番に対する依存を取り除く
+  # fetchを使用したデフォルト値の指定。キーが存在しない場合だけデフォルト値が使用される。
   def initialize(args)
-    @chainring = args[:chainring]
-    @cog = args[:cog]
+    @chainring = args.fetch(:chainring, 40)
+    @cog = args.fetch(:cog, 18)
     @wheel = args[:wheel]
   end
 
