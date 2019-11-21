@@ -12,6 +12,12 @@ class Bicycle
   def default_chain
     "10-speed"
   end
+
+  # 追加されるクラスに関してもdefault_tire_sizeの実装を要求する
+  def default_tire_size
+    raise NotImplementedError,
+      "this #{self.class} cannot respond to"
+  end
 end
 
 class RoadBike < Bicycle
@@ -49,23 +55,11 @@ class MountainBike < Bicycle
   end
 end
 
-road_bike = RoadBike.new(
-  size: "M",
-  tape_color: "red",
-  tire_size: "40",
-)
+# default_tire_sizeを定義していない
+class RecumbentBike < Bicycle
+  def default_chain
+    "9-speed"
+  end
+end
 
-p road_bike.size
-p road_bike.spares
-p road_bike.tire_size
-p road_bike.chain
-
-mountain_bike = MountainBike.new(
-  size: "S",
-  front_shock: "Manitou",
-  rear_shock: "Fox",
-)
-
-p mountain_bike.size
-p mountain_bike.tire_size
-p mountain_bike.chain
+bent = RecumbentBike.new(size: "L")
